@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Product;
 use App\Http\Requests\Inventory\AddProductRequest;
 
+
 class ProductController extends Controller
 {
     public function index()
@@ -30,9 +31,19 @@ class ProductController extends Controller
 
     public function store(AddProductRequest $request)
     {
-        Product::create($request->validated());
+        $product = Product::create($request->validated());
 
-        Inertia::flash('toast', ['message' => 'Item successfully added!']);
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($product)
+            ->withProperties([
+                'sku' => $product->sku,
+                'name' => $product->name,
+                'price' => $product->price,
+                'stocks' => $product->stocks,
+                'unit' => $product->unit,
+            ])->log('product created');
+        Inertia::flash('toast', ['message' => $product->name . ' successfully added!']);
         return redirect()->back();
     }
 
@@ -40,7 +51,15 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        Inertia::flash('toast', ['message' => 'Item successfully deleted!']);
+        Inertia::flash('toast', ['message' => $product->name . ' successfully deleted!']);
+        return redirect()->back();
+    }
+
+    public function update(Product $product, AddProductRequest $request)
+    {
+        $product->update($request->validated());
+        
+        Inertia::flash('toast', ['message' => $product->name . ' Item successfully updated!']);
         return redirect()->back();
     }
 }

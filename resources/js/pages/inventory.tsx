@@ -24,7 +24,6 @@ export default function Inventory({ products }: Props) {
 
     // Optimized search filter
     const searchTerm = deferredSearch.trim().toLowerCase();
-
     const filteredProducts = useMemo(() => {
         if (!searchTerm) {
             return products.data;
@@ -38,34 +37,6 @@ export default function Inventory({ products }: Props) {
         });
     }, [products.data, searchTerm]);
 
-    // const filteredProducts = useMemo(() => {
-    //     if (!deferredSearch.trim()) return products.data;
-        
-    // const searchLower = deferredSearch.toLowerCase();
-    //     return products.data.filter(product => 
-    //             product.name.toLowerCase().includes(searchLower) ||
-    //             product.sku.toLowerCase().includes(searchLower)
-    //         );
-    //     }, [products.data, deferredSearch]);
-
-    const { data, setData, post, processing, errors, reset } = useForm({
-        sku: '',
-        name: '',
-        price: '',
-        stocks: '',
-        unit: '',
-    });
-
-    const handleSubmit = (e: React.ChangeEvent) => {
-        e.preventDefault();
-        post(store().url, {
-            onSuccess: () => {
-                reset();
-                setShowModal(false);
-            },
-        });
-    };
-
     useEffect(() => {
         if (flash?.toast?.message) {
             setShowSuccessModal(true);
@@ -78,9 +49,11 @@ export default function Inventory({ products }: Props) {
 
             {/* Header Section */}
             <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 className="text-xl sm:text-2xl font-light tracking-tight text-gray-900 dark:text-gray-100">
-                    Product Table
-                </h1>
+                <div>
+                    <h1 className="text-3xl font-bold text-white mb-2">Inventory</h1>
+                    <p className="text-gray-400">Track and manage your stock levels</p>
+                </div>
+                
                 
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     {/* Search Input */}
@@ -154,10 +127,18 @@ export default function Inventory({ products }: Props) {
             <ProductTableForMobile filteredProducts={filteredProducts} />
 
             {/* Product Tables For Desktop View */}
-            <ProductTableForDesktop filteredProducts={filteredProducts} />
+            <ProductTableForDesktop 
+                filteredProducts={filteredProducts} 
+            />
 
             {/* Pagination */}
-            <PaginationButton products={products} />
+            <PaginationButton
+                current_page={products.current_page}
+                last_page={products.last_page}
+                path={products.path}
+                prev_page_url={products.prev_page_url}
+                next_page_url={products.next_page_url}
+            />
         </div>
     );
 }

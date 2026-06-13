@@ -1,29 +1,40 @@
-import { Link } from "@inertiajs/react"
+import { Link } from "@inertiajs/react";
 import { useState } from "react";
-import type { ProductPagination } from "@/types/product";
 
-interface Props {
-    products: ProductPagination;
+interface PaginationProps {
+    current_page: number;
+    last_page: number;
+    path: string;
+    prev_page_url: string | null;
+    next_page_url: string | null;
 }
 
-export default function PaginationButton({ products }: Props) {
+export default function PaginationButton({
+    current_page,
+    last_page,
+    path,
+    prev_page_url,
+    next_page_url,
+}: PaginationProps) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleClick = () => {
         setIsLoading(true);
-        // Reset loading after navigation (component will unmount/render anyway)
-        setTimeout(() => setIsLoading(false), 500);
     };
 
-    // Generate page numbers to show
     const getPageNumbers = (): (number | string)[] => {
         const delta = 2;
         const range: number[] = [];
         const rangeWithDots: (number | string)[] = [];
         let l: number | undefined;
 
-        for (let i = 1; i <= products.last_page; i++) {
-            if (i === 1 || i === products.last_page || (i >= products.current_page - delta && i <= products.current_page + delta)) {
+        for (let i = 1; i <= last_page; i++) {
+            if (
+                i === 1 ||
+                i === last_page ||
+                (i >= current_page - delta &&
+                    i <= current_page + delta)
+            ) {
                 range.push(i);
             }
         }
@@ -33,9 +44,10 @@ export default function PaginationButton({ products }: Props) {
                 if (i - l === 2) {
                     rangeWithDots.push(l + 1);
                 } else if (i - l !== 1) {
-                    rangeWithDots.push('...');
+                    rangeWithDots.push("...");
                 }
             }
+
             rangeWithDots.push(i);
             l = i;
         });
@@ -50,19 +62,19 @@ export default function PaginationButton({ products }: Props) {
                 {/* Page Indicator */}
                 <div className="flex items-center justify-center gap-2">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
-                        Page <span className="font-medium text-gray-900 dark:text-gray-100">{products.current_page}</span>
+                        Page <span className="font-medium text-gray-900 dark:text-gray-100">{current_page}</span>
                     </span>
                     <span className="text-gray-400 dark:text-gray-600">of</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{products.last_page}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{last_page}</span>
                 </div>
 
                 {/* Navigation Buttons */}
                 <div className="flex items-center justify-between gap-3">
                     <Link
-                        href={products.prev_page_url ?? '#'}
+                        href={prev_page_url ?? '#'}
                         onClick={handleClick}
                         className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                            !products.prev_page_url 
+                            !prev_page_url 
                                 ? "pointer-events-none opacity-40 cursor-not-allowed"
                                 : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700"
                         } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
@@ -74,10 +86,10 @@ export default function PaginationButton({ products }: Props) {
                     </Link>
 
                     <Link
-                        href={products.next_page_url ?? '#'}
+                        href={next_page_url ?? '#'}
                         onClick={handleClick}
                         className={`flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                            !products.next_page_url 
+                            !next_page_url 
                                 ? "pointer-events-none opacity-40 cursor-not-allowed"
                                 : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700"
                         } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
@@ -94,10 +106,10 @@ export default function PaginationButton({ products }: Props) {
             <div className="hidden sm:flex sm:flex-row items-center justify-between gap-4">
                 {/* Previous Button */}
                 <Link
-                    href={products.prev_page_url ?? '#'}
+                    href={prev_page_url ?? '#'}
                     onClick={handleClick}
                     className={`inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                        !products.prev_page_url 
+                        !prev_page_url 
                             ? "pointer-events-none opacity-40 cursor-not-allowed"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 active:scale-95"
                     } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
@@ -118,10 +130,10 @@ export default function PaginationButton({ products }: Props) {
                         ) : (
                             <Link
                                 key={page}
-                                href={`${products.path}?page=${page}`}
+                                href={`${path}?page=${page}`}
                                 onClick={handleClick}
                                 className={`min-w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 ${
-                                    products.current_page === page
+                                    current_page === page
                                         ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md"
                                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105"
                                 } ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
@@ -135,18 +147,18 @@ export default function PaginationButton({ products }: Props) {
                 {/* Page Indicator - Tablet */}
                 <div className="hidden sm:flex md:hidden items-center gap-2">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-medium text-gray-900 dark:text-gray-100">{products.current_page}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{current_page}</span>
                         <span className="mx-1 text-gray-400 dark:text-gray-600">/</span>
-                        <span className="font-medium text-gray-900 dark:text-gray-100">{products.last_page}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{last_page}</span>
                     </span>
                 </div>
 
                 {/* Next Button */}
                 <Link
-                    href={products.next_page_url ?? '#'}
+                    href={next_page_url ?? '#'}
                     onClick={handleClick}
                     className={`inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                        !products.next_page_url 
+                        !next_page_url 
                             ? "pointer-events-none opacity-40 cursor-not-allowed"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 active:scale-95"
                     } ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}

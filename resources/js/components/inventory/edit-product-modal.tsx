@@ -1,29 +1,46 @@
-import { store } from "@/routes/inventory";
+import { update } from "@/routes/inventory";
 import Modal from "@/components/modals/modal-template";
 import { useForm } from "@inertiajs/react";
+import type { Product } from "@/types/product";
+import { useEffect } from "react";
 
-type AddProductModalProps = {
+type EditProductModalProps = {
     show: boolean;
+    product: Product | null;
     onClose: () => void;
 };
 
-export default function AddProductModal({
-    show, onClose,
-}: AddProductModalProps) {
+export default function EditProductModal({
+    show, onClose, product
+}: EditProductModalProps) {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         sku: '',
         name: '',
         price: '',
         stocks: '',
-        unit: '',
         min_stock: '',
+        unit: '',
     });
+
+    useEffect(() => {
+        if(product) {
+            setData({
+                sku: product?.sku,
+                name: product?.name,
+                price: String(product.price),
+                stocks: String(product.stocks),
+                min_stock: String(product.min_stock),
+                unit: product.unit,
+            })
+        }
+    }, [product])
 
     const handleSubmit = (e: React.ChangeEvent) => {
         e.preventDefault();
-            post(store().url, {
-                onSuccess: () => {
+        if (!product) return;
+        post(update(product.id).url, {
+            onSuccess: () => {
                     reset();
                     onClose();
                 },
@@ -35,7 +52,7 @@ export default function AddProductModal({
                 <div className="p-6 bg-white dark:bg-gray-900 rounded-lg animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-light tracking-tight text-gray-900 dark:text-gray-100">
-                            Add Product
+                            Edit Product
                         </h2>
                         <button
                             onClick={onClose}
@@ -121,7 +138,7 @@ export default function AddProductModal({
                              {/* Minimum Stock Field */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Min stocks
+                                   Min stock
                                 </label>
                                 <input
                                     type="number"

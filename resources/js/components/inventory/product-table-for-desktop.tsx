@@ -3,20 +3,31 @@ import TableHead from "./ui/table-head"
 import type { Product } from "@/types/product";
 import { router } from '@inertiajs/react';
 import { destroy } from "@/routes/inventory";
+import { useState } from "react";
+import EditProductModal from "./edit-product-modal";
+import { ShoppingCart } from "lucide-react";
+
 
 interface Props {
     filteredProducts: Product[];
 }
 
 export default function ProductTableForDesktop({filteredProducts}: Props) {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     const handleDelete = (product: Product) => {
         if (!confirm(`Delete ${product.name}?`)) {
             return;
         }
-
         router.delete(destroy(product.id).url);
     };
+
+    const handleEdit = (product: Product) => {
+        setSelectedProduct(product);
+        setShowModal(true);
+    }
+
     return (
         <>
             <div className="hidden lg:block">
@@ -36,7 +47,7 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
                                 </TableRow>
                             </thead>
                             <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
-                                {filteredProducts.map((product, index) => (
+                                {filteredProducts.map((product) => (
                                     <tr
                                         key={product.id}
                                         className="group transition-colors hover:bg-gray-50/40 dark:hover:bg-gray-800/40 cursor-default"
@@ -96,11 +107,11 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
                                             )}
                                         </td>
                                         <td className="px-4 sm:px-6 py-3 sm:py-4">
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-1.5 sm:gap-2">
                                                 {/* Edit Button */}
                                                 <button
-                                                    // onClick={() => handleEdit(product)}
-                                                    className="inline-flex items-center gap-1 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors"
+                                                    onClick={() => handleEdit(product)}
+                                                    className="inline-flex items-center justify-center gap-1 rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-all duration-200"
                                                     title="Edit product"
                                                 >
                                                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -108,10 +119,21 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
                                                     </svg>
                                                 </button>
 
+                                                {/* Purchase Button - Minimalist */}
+                                                <button
+                                                    // onClick={() => handlePurchase(product)}
+                                                    className="inline-flex items-center gap-1.5 px-2 py-1 text-sm font-medium text-gray-600 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors duration-150"
+                                                    title="Purchase product"
+                                                >
+                                                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                                                    </svg>
+                                                </button>
+
                                                 {/* Delete Button */}
                                                 <button
                                                     onClick={() => handleDelete(product)}
-                                                    className="inline-flex items-center gap-1 rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:text-red-300 transition-colors"
+                                                    className="inline-flex items-center justify-center gap-1 rounded-lg p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600 dark:text-red-500 dark:hover:bg-red-950/30 dark:hover:text-red-400 transition-all duration-200"
                                                     title="Delete product"
                                                 >
                                                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -140,6 +162,7 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
                         </div>
                     )}
                 </div>
+                <EditProductModal show={showModal} onClose={() => setShowModal(false)} product={selectedProduct} />
             </div>
         </>
     )

@@ -1,39 +1,85 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { Input } from '@/components/ui/input'; 
 import { dashboard } from '@/routes';
+import StatsCard from '@/components/dashboard/stats-card'; 
+import { useState } from 'react';
 
-export default function Dashboard() {
-    return (
-        <>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+interface StockItems {
+  stocks: number;
+  min_stock: number;
+}
 
-                <Input />
-                {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div> */}
-            </div>
-        </>
-    );
+interface Props {
+  StockItems: StockItems[];
+}
+
+export default function Dashboard({StockItems}: Props)  {
+
+  // sum total items in database
+  const totalItems = StockItems.length;
+
+  // sum low stock items in database
+  const lowStockItems = StockItems.filter(item => item.stocks !== 0 && item.stocks <= item.min_stock).length;
+
+  // sum out of stock items in database
+  const outOfStockItems = StockItems.filter(item => item.stocks === 0).length;
+
+  // sum available stocks in database
+  const totalStocks = StockItems.reduce((sum, item) => sum + item.stocks, 0);
+  
+  return (
+    <div className="min-h-screen text-gray-100">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold dark:text-white text-gray-900 mb-2">Dashboard</h1>
+          <p className="text-gray-400">Track and manage your stock levels</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCard   
+            statsData={totalItems}
+            icon={'package'}
+            description={'Total Items'}
+          />
+          
+          <StatsCard 
+            statsData={totalStocks}
+            icon={'ShoppingCart'}
+            description={'Total Stocks'}
+          />
+
+          <StatsCard 
+            statsData={lowStockItems}
+            icon={'alerttriangle'}
+            description={'Low Stocks'}
+          />
+
+          <StatsCard 
+            statsData={outOfStockItems}
+            icon={'trendingup'}
+            description={'Out Of Stocks'}
+          />
+          
+        </div>
+
+        {/* Filters */}
+
+
+        {/* Items Table */}
+
+
+        {/* Footer note */}
+
+      </div>
+    </div>
+  );
 }
 
 Dashboard.layout = {
-    breadcrumbs: [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-        },
-    ],
+  breadcrumbs: [
+    {
+      title: 'Dashboard',
+      href: dashboard(),
+    },
+  ],
 };

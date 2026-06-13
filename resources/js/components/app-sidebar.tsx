@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, List, Package } from 'lucide-react';
+import { LayoutGrid, StretchHorizontal, Logs } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import { index } from '@/routes/inventory';
+import { logs } from '@/routes/activity';
 import { dashboard } from '@/routes'
 
 const mainNavItems: NavItem[] = [
@@ -26,8 +27,17 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Inventory',
         href: index(),
-        icon: List,
+        icon: StretchHorizontal,
     },
+    {
+        title: 'Activity Logs',
+        href: logs(),
+        icon: Logs,
+    },
+];
+
+const FooterNavItems: NavItem[] = [
+    
 ];
 
 export function AppSidebar() {

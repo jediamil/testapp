@@ -1,12 +1,16 @@
 import type { Product } from "@/types/product";
 import { router } from '@inertiajs/react';
 import { destroy } from "@/routes/inventory";
+import { useState } from "react";
+import EditProductModal from "./edit-product-modal";
 
 interface Props {
     filteredProducts: Product[];
 }
 
 export default function ProductTableForDesktop({filteredProducts}: Props) {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     const handleDelete = (product: Product) => {
         if (!confirm(`Delete ${product.name}?`)) {
@@ -15,6 +19,11 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
     
         router.delete(destroy(product.id).url);
     };
+
+    const handleEdit = (product: Product) => {
+        setSelectedProduct(product);
+        setShowModal(true);
+    }
 
     return (
         <>
@@ -105,7 +114,7 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
 
                         {/* Optional: Quick Actions (can be added later) */}
                         <div className="flex gap-2 mt-3 pt-3 border-t border-gray-50 dark:border-gray-800">
-                            <button className="flex-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-1">
+                            <button onClick={() => handleEdit(product)} className="flex-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-1">
                                 Edit
                             </button>
                             <button onClick={() => handleDelete(product)} className="flex-1 text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors py-1">
@@ -114,6 +123,8 @@ export default function ProductTableForDesktop({filteredProducts}: Props) {
                         </div>
                     </div>
                 ))}
+
+                <EditProductModal show={showModal} onClose={() => setShowModal(false)} product={selectedProduct} />
 
                 {/* Empty State for Mobile */}
                 {filteredProducts.length === 0 && (

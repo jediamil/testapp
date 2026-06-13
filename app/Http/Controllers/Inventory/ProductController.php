@@ -23,7 +23,6 @@ class ProductController extends Controller
                 'stocks',
                 'min_stock',
                 'unit',
-                'created_at',
             ])
             ->paginate(20),
         ]);

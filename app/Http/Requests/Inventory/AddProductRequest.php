@@ -40,7 +40,7 @@ class AddProductRequest extends FormRequest
             ],
             'price' => ['required', 'numeric', 'min:0'],
             'stocks' => ['required', 'integer', 'min:0'],
-            // 'min_stocks' => ['required', 'integer', 'min:0'],
+            'min_stock' => ['required', 'integer', 'min:0'],
         ];
     }
 }

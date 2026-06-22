@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\ProductController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\AcivityLogs\LogsController;
+use App\Http\Controllers\Test\TestController;
+use App\Http\Controllers\ProfitCalculation\ProfitCalculationController;
 
 Route::inertia('/', 'auth/login')->name('home');
 
@@ -21,8 +23,19 @@ Route::inertia('/', 'auth/login')->name('home');
     
     // Activity logs route
     Route::get('/activity-logs', [LogsController::class, 'index'])->name('activity.logs');
+
+    // Route for calculator
+    Route::get('/calculator', [ProfitCalculationController::class, 'index'])->name('inventory.calculator');
+
+    Route::post('/calculator/store', [ProfitCalculationController::class, 'store'])->name('profitcalculator.store');
+
+    Route::get('/calculator/index', [ProfitCalculationController::class, 'calculator'])->name('profitcalculator.calcindex');
+
+    Route::delete('/calculator/{ProfitCalculation}', [ProfitCalculationController::class, 'destroy'])->name('profitcalculator.destroy');
 // });
 
+
+Route::get('/test', [TestController::class, 'testCheckout'])->name('test');
 
 
 require __DIR__.'/settings.php';

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use App\Models\StockOutItems;
 
 
 #[Fillable([
@@ -17,5 +18,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 ])]
 class Product extends Model
 {
-    //
+    public function stockOutItems()
+    {
+        return $this->hasMany(StockOutItems::class);
+    }
 }

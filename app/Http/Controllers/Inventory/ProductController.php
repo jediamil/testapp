@@ -36,12 +36,13 @@ class ProductController extends Controller
             ->causedBy(auth()->user())
             ->performedOn($product)
             ->withProperties([
+                'user'=> auth()->user()->name,
                 'sku' => $product->sku,
                 'name' => $product->name,
                 'price' => $product->price,
                 'stocks' => $product->stocks,
                 'unit' => $product->unit,
-            ])->log('product created');
+            ])->log('Product created');
         Inertia::flash('toast', ['message' => $product->name . ' successfully added!']);
         return redirect()->back();
     }

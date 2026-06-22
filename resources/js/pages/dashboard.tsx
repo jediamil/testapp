@@ -1,6 +1,5 @@
 import { dashboard } from '@/routes';
 import StatsCard from '@/components/dashboard/stats-card'; 
-import { useState } from 'react';
 
 interface StockItems {
   stocks: number;
